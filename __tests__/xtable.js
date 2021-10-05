@@ -81,15 +81,22 @@ describe('XTable', function() {
 
     describe('sort', function() {
         test('should sort the dataset', function() {
-            let data = [...testData];
+            let data = [['a', 'b'], [1,'f'], [3, 'z'], [2,'y'],[4,'z']];
+            let descendingData = [
+                {a:4, b: 'z'},
+                {a:3, b: 'z'},
+                {a:2, b: 'y'},
+                {a:1, b:'f'}
+            ];
+            let ascendingData = [...descendingData].reverse();
+            let descendingSort = (a, b) => b.a - a.a;
+            let ascendingSort =  (a, b) => a.a - b.a;
+            
             let table = new XTable(data);
-
-            table.sort((a, b) => a.productId > b.productId);
-
-            let entries = table.selectNow(entry => entry.productId.startsWith('85-BH'));
-            // entries.forEach(entry => )
-            console.log('%o', entries[0]);
-            expect(entries).toHaveLength(13);
+            expect(table.sort(ascendingSort).selectNow())
+                .toMatchObject(ascendingData);
+            expect(table.sort(descendingSort).selectNow())
+                .toMatchObject(descendingData);
         })
     })
 

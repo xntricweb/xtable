@@ -188,8 +188,10 @@ class XTable {
             entryA.dataRow = a;
             entryB.dataRow = b;
 
-            return sortFunction(a, b);
-        })
+            return sortFunction(entryA, entryB);
+        });
+
+        return this;
     }
 
     getEntry(rowIndex) {
