@@ -91,7 +91,7 @@ describe('XTable', function() {
             let ascendingData = [...descendingData].reverse();
             let descendingSort = (a, b) => b.a - a.a;
             let ascendingSort =  (a, b) => a.a - b.a;
-            
+
             let table = new XTable(data);
             expect(table.sort(ascendingSort).selectNow())
                 .toMatchObject(ascendingData);
@@ -100,4 +100,19 @@ describe('XTable', function() {
         })
     })
 
+    describe('calculated fields', function() {
+        test('should support calculated fields', function() {
+            let table = new XTable(testData);
+            table.createCalculatedFields({
+                enteredOn(entry) {
+                    expect(this).toBe(table);
+                    return new Date(entry.timestamp);
+                }
+            });
+
+            let entry = table.selectFirst();
+            expect(entry.enteredOn).toBeInstanceOf(Date);
+            expect(entry.enteredOn).toEqual(new Date(entry.timestamp)); 
+        })
+    })
 });

@@ -202,13 +202,15 @@ class XTable {
         const EntryProto = this._EntryClass.prototype;
         let self = this;
 
-        Object.entries(fields).forEach((field, calc) => {
+        Object.entries(fields).forEach(([field, calc]) => {
+            let binding = calc.bind(self);
+
             Object.defineProperty(EntryProto, field, {
-                get() { return calc(this); },
+                get() { return binding(this); },
                 enumerable: true
             });
 
-            Object.defineProperties(this, field, {
+            Object.defineProperty(this, field, {
                 value(rowIndex) { return calc(self.getEntry(rowIndex)); },
                 enumerable: true,
             })
