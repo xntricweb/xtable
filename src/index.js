@@ -94,6 +94,7 @@ class XTable {
         const [entryProperties, xTableProperties] = 
             generateEntryProperties(headers, !readOnly);
 
+        this.newEntryProperties = entryProperties;
 
         class Entry {
             get xTable() { return xtable; }
@@ -198,18 +199,16 @@ class XTable {
         return new this._EntryClass(rowIndex);
     }
 
-    createCalculatedFields(fields) {
-        const EntryProto = this._EntryClass.prototype;
+    createCalculatedFields(fields, onPrototype = false) {
+        const target = onPrototype? this._EntryClass.prototype: this.newEntryProperties;
         let self = this;
 
         Object.entries(fields).forEach(([field, calc]) => {
-            let binding = calc.bind(self);
-
-            Object.defineProperty(EntryProto, field, {
-                get() { return binding(this); },
+            Object.defineProperty(target, field, {
+                get() { return calc(this, self); },
                 enumerable: true
             });
-
+                
             Object.defineProperty(this, field, {
                 value(rowIndex) { return calc(self.getEntry(rowIndex)); },
                 enumerable: true,
